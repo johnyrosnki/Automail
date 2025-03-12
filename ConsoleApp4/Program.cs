@@ -1,14 +1,29 @@
 ﻿
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        string imapHost = "imap.gmail.com";  // Zmień na swój serwer IMAP
-        int imapPort = 993;
-        string smtpHost = "smtp.gmail.com";  // Zmień na swój serwer SMTP
-        int smtpPort = 587;
-        string email = "twoj@email.com";       // Twój e-mail
-        string password = "twojehaslo";
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+        Console.WriteLine("Email: " + config["EmailSettings:Email"]);
+        Console.WriteLine("IMAP Server: " + config["EmailSettings:ImapServer"]);
+        Console.WriteLine("SMTP Server: " + config["EmailSettings:SmtpServer"]);
+
+        var emailService = new EmailService(config);
+
+        while (true)
+        {
+            Console.WriteLine("Sprawdzanie nowych maili...");
+            await emailService.CheckAndReplyEmailsAsync();
+            Console.WriteLine("Oczekiwanie 60 sekund...");
+            await Task.Delay(TimeSpan.FromSeconds(60));
+        }
     }
 }
