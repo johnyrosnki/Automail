@@ -15,6 +15,7 @@ class Program
         Console.WriteLine("Email: " + config["EmailSettings:Email"]);
         Console.WriteLine("IMAP Server: " + config["EmailSettings:ImapServer"]);
         Console.WriteLine("SMTP Server: " + config["EmailSettings:SmtpServer"]);
+        Console.WriteLine(File.ReadAllText("appsettings.json"));
 
         var emailService = new EmailService(config);
 

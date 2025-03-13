@@ -27,6 +27,9 @@ public class EmailService
         _imapPort = int.Parse(settings["ImapPort"]);
         _smtpServer = settings["SmtpServer"];
         _smtpPort = int.Parse(settings["SmtpPort"]);
+
+        Console.WriteLine($"Email: {_email}");
+        Console.WriteLine($"AppPassword: {_password ?? "NULL"}");
     }
 
     public async Task CheckAndReplyEmailsAsync()
@@ -44,6 +47,14 @@ public class EmailService
         {
             var message = await inbox.GetMessageAsync(uid);
             Console.WriteLine($"Nowa wiadomość od: {message.From}");
+
+            var path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            Console.WriteLine($"Looking for config file at: {path}");
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("ERROR: appsettings.json not found!");
+            }
 
             var reply = new MimeMessage();
             reply.From.Add(new MailboxAddress("AutoResponder", _email));
